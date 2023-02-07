@@ -1,4 +1,4 @@
-package crossplane
+package crossplanepause
 
 import (
 	"context"
@@ -47,11 +47,19 @@ type PauseInfo struct {
 	ShouldUnpauseTime *metav1.Time `json:"shouldUnpauseTime,omitempty"`
 }
 
-// Reconciler reconciles a crossplane resource to avoid polling
-// by add pause annotation.
+// Reconciler reconciles a crossplane resource to avoid keep polling by add pause annotation.
+// It will pause the resource if and only if:
+// 1. the resource is Ready and Sync
+// 2. the time since last time we pause it is not longer than FrozenTimeDuration.
+// 3. the resource is not deleted
+// It will unpause the resource if one of the flowing condition is met::
+// 1. the resource deleted.
+// 2. the resource is paused longer than UnPausePollInterval
+// 3. the spec is updated.
 type Reconciler struct {
 	client.Client
-	Scheme           *runtime.Scheme
+	Scheme *runtime.Scheme
+	// The GVK of the resource we want to reconcile.
 	GroupVersionKind schema.GroupVersionKind
 	// If sets UnPausePollInterval, every UnPausePollInterval, we will unpause the resource to let
 	// crossplane to reconcile it when Ready and Sync condition are true.

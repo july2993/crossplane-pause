@@ -1,4 +1,4 @@
-package crossplane
+package crossplanepause
 
 import (
 	"context"
