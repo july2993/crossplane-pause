@@ -11,5 +11,5 @@ It will unpause the resource if one of the flowing condition is met:
 2. The resource is paused longer than `UnPausePollInterval`.
 3. The spec is updated.
 
-See [example.go](../cmd/example.go) about how to use it.
+See [example.go](cmd/example.go) about how to use it.
 
