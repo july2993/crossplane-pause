@@ -244,8 +244,8 @@ func ensurePause(ctx context.Context, cli client.Client, obj *unstructured.Unstr
 	if unPausePollInterval != nil {
 		shouldUnpauseTime := info.LastPauseTime.Add(*unPausePollInterval)
 		// To avoid unpause too much resources at the same time when enable this feature.
-		jitter := time.Duration(float64(rand.Int63n(int64(*unPausePollInterval))) * 0.1)
-		shouldUnpauseTime.Add(jitter)
+		jitter := time.Duration(rand.Float64() * 0.1 * float64(*unPausePollInterval))
+		shouldUnpauseTime = shouldUnpauseTime.Add(jitter)
 		info.ShouldUnpauseTime = &metav1.Time{Time: shouldUnpauseTime}
 	}
 	unstructured.RemoveNestedField(obj.Object, "metadata", "annotations", AnnotationKeyPauseInfo)
